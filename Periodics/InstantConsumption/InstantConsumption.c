@@ -16,7 +16,7 @@ void ISPublisher_Thread(void *arg) {
 		uint32_t raw = ADC_GetValueFromeChannel(ISPub->ADC_Handler,
 				ISPub->ADC_Channel);
 		ISPub->value = 1.0 * raw / 19859.39;
-		UART_printf(ISPub->UART_Handler, "@8:%.3f;;\r\n", ISPub->value);
+		UART_printf(ISPub->UART_Handler, "@6:%.3f;;\r\n", ISPub->value);
 		osDelay(ISPub->Period);
 	}
 }

@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "serial_monitor.h": "c",
+        "servo.h": "c",
+        "gpiohandler.h": "c",
+        "cmsis_os.h": "c",
+        "main.h": "c",
+        "stm32f4xx_hal.h": "c"
+    }
+}

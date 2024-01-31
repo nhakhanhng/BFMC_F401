@@ -17,7 +17,7 @@ typedef struct {
 	uint32_t Period;
 	osThreadId_t PubThread;
 	uint8_t PubID;
-	UART_HandleTypeDef *UART_Handler;
+	UARTHandler_Struct *UART_Handler;
 	uint8_t isEnable;
 	float value;
 } BattPublisher_Struct;

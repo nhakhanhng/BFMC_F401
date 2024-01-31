@@ -102,10 +102,10 @@ void Servo_setPWM(Servo_HandleStruct *Servo, float PWM) {
 	__HAL_TIM_SET_COMPARE(Servo->htim, Servo->Channel, round(PWM));
 }
 void Servo_setAngle(Servo_HandleStruct *Servo, float Angle) {
-//	if (Angle > Servo->Limit)
-//		Angle = Servo->Limit;
-//	else if (Angle < -Servo->Limit)
-//		Angle = -Servo->Limit;
+	if (Angle > Servo->Limit)
+		Angle = Servo->Limit;
+	else if (Angle < -Servo->Limit)
+		Angle = -Servo->Limit;
 	Interpolation_Result interpolation = interpolate(Angle,steeringValueP,steeringValueN,stepValues,zeroDefaultValues,2);
 	float pulse = (interpolation.step_value * Angle + interpolation.default_value) * 60000;
 	Servo_setPWM(Servo, pulse);

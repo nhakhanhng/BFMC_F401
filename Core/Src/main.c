@@ -22,11 +22,15 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
 #include "Servo/Servo.h"
 #include "Motor/MotorControl.h"
 #include "GPIO/GPIOHandler.h"
 #include "Serial_Monitor.h"
 #include "SpeedControlDuration/SpeedControlDuration.h"
+#include "BNOPublisher/BNOPublisher.h"
+#include "InstantConsumption/InstantConsumption.h"
+#include "BattPublisher/BattPublisher.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,23 +69,51 @@ const osThreadAttr_t defaultTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
+uint32_t Channels[2] = {ADC_CHANNEL_0,ADC_CHANNEL_1};
 Servo_HandleStruct Servo;
 Motor_HandlerStruct Motor;
-SpeedControlDuration_HandleStruct SpeedController = {
+ADC_HandleStruct ADC_Handler = (ADC_HandleStruct){
+		.hadc = &hadc1,
+		.Channels = Channels,
+		.NumofChannel = 2
+};
+SpeedControlDuration_HandleStruct SpeedController = (SpeedControlDuration_HandleStruct){
 		.Motor = &Motor,
 		.Servo = &Servo
 };
+
 SerialMonitor_Struct SerialMon;
 UARTHandler_Struct UART = { .RxBufferSize = 50, .huart = &huart2 };
 UARTHandler_Struct UART1 = { .RxBufferSize = 50, .huart = &huart1 };
+
+
+BNOPublisher_Struct BNOPub = (BNOPublisher_Struct){
+		.BNO_hi2c = &hi2c1,
+		.Period = 10,
+		.UART_Handler = &UART,
+};
+
+ISPublisher_Struct ISPub = (ISPublisher_Struct){
+		.ADC_Handler = &ADC_Handler,
+		.ADC_Channel = ADC_CHANNEL_0,
+		.Period = 50,
+		.UART_Handler = &UART,
+};
+
+BattPublisher_Struct BattPub = (BattPublisher_Struct){
+		.ADC_Handler = &ADC_Handler,
+		.ADC_Channel = ADC_CHANNEL_0,
+		.Period = 50,
+		.UART_Handler = &UART,
+};
 SerialMonitor_CBStruct SerMon_CBTable[] = {
 		{ .Function = Motor_setSpeedCMD,.ObjHandler = (void*) &Motor },
 		{ .Function = Servo_setAngleCMD,.ObjHandler = (void*) &Servo },
 		{NULL, NULL},
 		{NULL, NULL},
-		{NULL, NULL},
-		{NULL, NULL},
-		{NULL, NULL},
+		{.Function = BattPublisher_EnPubCMD, .ObjHandler = (void*) &BattPub},
+		{.Function = ISPublisher_EnPubCMD, .ObjHandler = (void*) &ISPub},
+		{.Function = BNOPublisher_EnPubCMD, .ObjHandler = (void *) &BNOPub},
 		{NULL, NULL},
 		{.Function = SpeedControlDuration_setVCDCMD,.ObjHandler = (void *)&SpeedController}
 		};
@@ -628,10 +660,14 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN 5 */
 	UART_Init(&UART, &huart2);
 	UART_Init(&UART1, &huart1);
+	ADC_Start_DMA(&ADC_Handler);
 	SerialMonitor_Start(&SerMon);
 	UART_printf(&UART, "I am awake!!\r\n");
 	Motor_Init(&Motor, &htim1, TIM_CHANNEL_3);
 	Servo_Init(&Servo, &htim3, TIM_CHANNEL_2, 25, 0);
+	BNOPublisher_Start(&BNOPub);
+	ISPublisher_Start(&ISPub);
+	BattPublisher_Start(&BattPub);
 	SpeedControlDuration_Init(&SpeedController);
 	Motor_Start(&Motor);
 	Servo_Start(&Servo);
