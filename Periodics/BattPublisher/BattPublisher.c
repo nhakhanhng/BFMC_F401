@@ -10,7 +10,7 @@ void BattPublisher_Thread(void *arg) {
 	BattPublisher_Struct *BattPub = (BattPublisher_Struct*) arg;
 
 	while (1) {
-		if (!BattPub->isEnable)
+		if (!BattPub->Period)
 			osThreadSuspend(BattPub->PubThread);
 		uint32_t raw = ADC_GetValueFromeChannel(BattPub->ADC_Handler,
 				BattPub->ADC_Channel);
@@ -24,20 +24,20 @@ void BattPublisher_Start(BattPublisher_Struct *BattPub) {
 	const osThreadAttr_t BattPub_TaskAttr = { .name =
 			"Instant Consumption Publisher", .stack_size = 512 * 4, .priority =
 			osPriorityNormal, };
-	BattPub->isEnable = 0;
+	BattPub->Period = 0;
 	BattPub->PubThread = osThreadNew(BattPublisher_Thread, BattPub, &BattPub_TaskAttr);
 }
 
 void BattPublisher_EnPubCMD(void *Handler, char *Msg, char *Resp) {
 	BattPublisher_Struct *Publisher = (BattPublisher_Struct*) Handler;
-	int enable = 0;
-	uint32_t res = sscanf(Msg, "%d", &enable);
+	int period = 0;
+	uint32_t res = sscanf(Msg, "%d", &period);
 	if (res != 1) {
 		sprintf(Resp, "-1;");
 		return;
 	}
-	Publisher->isEnable = enable;
-	if (enable) osThreadResume(Publisher->PubThread);
+	Publisher->Period = period;
+	if (period) osThreadResume(Publisher->PubThread);
 	sprintf(Resp, "0;");
 	return ;
 }

@@ -33,7 +33,7 @@ void SerialMonitor_TaskHandler(void* argument)
 {
 	SerialMonitor_Struct* SerMon = (SerialMonitor_Struct*) argument;
 	int Status;
-	UART_printf(SerMon->UART, "Hello\r\n");
+//	UART_printf(SerMon->UART, "Hello\r\n");
 	while(1)
 	{
 		uint8_t RcvData[SER_MON_RCVBUFFER_SIZE] = {0};
@@ -43,7 +43,7 @@ void SerialMonitor_TaskHandler(void* argument)
 		if (Status == HAL_OK)
 		{
 //			SyncPrintf("Receive Len %d Data %s",(int) RcvLen, RcvData);
-			UART_printf(SerMon->UART, "%s",RcvData);
+//			UART_printf(SerMon->UART, "%s",RcvData);
 			if(RcvData[0] == '#' && RcvData[RcvLen -2] == '\r' && RcvData[RcvLen - 1] == '\n')
 			{
 				int MsgID = 1;
@@ -63,7 +63,7 @@ void SerialMonitor_TaskHandler(void* argument)
 						else
 						{
 							CB_Handler(SerMon->Callback[MsgID-1].ObjHandler, Msg, resp);
-							UART_printf(SerMon->UART, "@%d:%s\r\n", MsgID, resp);
+							UART_printf(SerMon->UART, "@%d:%s;\r\n", MsgID, resp);
 						}
 
 					}

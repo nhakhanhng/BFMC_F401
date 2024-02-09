@@ -15,15 +15,18 @@
 #include "cmsis_os.h"
 
 typedef struct {
-	I2C_HandleTypeDef *BNO_hi2c;
+	I2C_OS_HandlerStruct *BNO_hi2c;
 	uint32_t Period;
-	osThreadId_t PubThread;
+//	osThreadId_t PubThread;
+	TIM_HandleTypeDef *htim;
 	uint8_t PubID;
 	UARTHandler_Struct *UART_Handler;
-	uint8_t isEnable;
+//	uint8_t isEnable;
 } BNOPublisher_Struct;
 
+
 void BNOPublisher_Start(BNOPublisher_Struct *Publisher);
+void BNOPublisher_Run(BNOPublisher_Struct *Publisher);
 void BNOPublisher_EnPubCMD(void *Handler,char *Msg,char *Resp);
 
 #endif /* BNOPUBLISHER_BNOPUBLISHER_H_ */

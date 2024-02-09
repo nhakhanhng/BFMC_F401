@@ -13,7 +13,7 @@
 typedef struct {
 	ADC_HandleTypeDef *hadc;
 	uint32_t *Channels;
-	uint16_t *Raw_val;
+	uint32_t *Raw_val;
 	uint8_t NumofChannel;
 } ADC_HandleStruct;
 

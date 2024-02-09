@@ -19,7 +19,7 @@ typedef struct {
 	osThreadId_t PubThread;
 	uint8_t PubID;
 	UARTHandler_Struct *UART_Handler;
-	uint8_t isEnable;
+//	uint8_t isEnable;
 	float value;
 } ISPublisher_Struct;
 
