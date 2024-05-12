@@ -16,12 +16,11 @@
 
 typedef struct {
 	I2C_OS_HandlerStruct *BNO_hi2c;
-	uint32_t Period;
-//	osThreadId_t PubThread;
-	TIM_HandleTypeDef *htim;
-	uint8_t PubID;
 	UARTHandler_Struct *UART_Handler;
-//	uint8_t isEnable;
+	uint32_t Period;
+	osThreadId_t PubThread;
+//	TIM_HandleTypeDef *htim;
+	uint8_t PubID;
 } BNOPublisher_Struct;
 
 

@@ -12,7 +12,7 @@
 
 void UART_Init(UARTHandler_Struct *UART, UART_HandleTypeDef *huart) {
 	UART->huart = huart;
-	UART->RxBufferSize = 30;
+//	UART->RxBufferSize = 30;
 	UART->RxBuffer = pvPortMalloc(UART->RxBufferSize);
 	UART->RxMutex = osMutexNew(NULL);
 	UART->TxMutex = osMutexNew(NULL);
@@ -21,7 +21,7 @@ void UART_Init(UARTHandler_Struct *UART, UART_HandleTypeDef *huart) {
 HAL_StatusTypeDef UART_printf(UARTHandler_Struct *UART, char *fmt, ...) {
 	va_list arg;
 	int status = HAL_OK;
-	char Buffer[50] = { 0 };
+	char Buffer[70] = { 0 };
 	size_t size = sizeof(Buffer);
 	va_start(arg, fmt);
 	char *Output = vasnprintf(Buffer, &size, fmt, arg);

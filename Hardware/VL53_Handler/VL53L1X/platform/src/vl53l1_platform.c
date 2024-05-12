@@ -3,7 +3,6 @@
 #include "vl53l1_api.h"
 
 #include "stm32f4xx_hal.h"
-#include "cmsis_os.h"
 #include <string.h>
 #include <time.h>
 #include <math.h>
@@ -41,7 +40,7 @@ int _I2CWrite(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
 	int status;
 	int i2c_time_out = I2C_TIME_OUT_BASE + count * I2C_TIME_OUT_BYTE;
 
-	status = I2C_OS_Master_Transmit_IT(Dev->I2cHandle, Dev->I2cDevAddr, pdata,
+	status = HAL_I2C_Master_Transmit(Dev->I2cHandle, Dev->I2cDevAddr << 1, pdata,
 			count, i2c_time_out);
 	if (status) {
 		//VL6180x_ErrLog("I2C error 0x%x %d len", dev->I2cAddr, len);
@@ -54,7 +53,7 @@ int _I2CRead(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
 	int status;
 	int i2c_time_out = I2C_TIME_OUT_BASE + count * I2C_TIME_OUT_BYTE;
 
-	status = I2C_OS_Master_Receive_IT(Dev->I2cHandle, Dev->I2cDevAddr | 1, pdata,
+	status = HAL_I2C_Master_Receive(Dev->I2cHandle, Dev->I2cDevAddr << 1 | 1, pdata,
 			count, i2c_time_out);
 	if (status) {
 		//VL6180x_ErrLog("I2C error 0x%x %d len", dev->I2cAddr, len);
@@ -280,13 +279,13 @@ VL53L1_Error VL53L1_GetTimerFrequency(int32_t *ptimer_freq_hz) {
 
 VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t *pdev, int32_t wait_ms) {
 	(void) pdev;
-	osDelay(wait_ms);
+	HAL_Delay(wait_ms);
 	return VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_WaitUs(VL53L1_Dev_t *pdev, int32_t wait_us) {
 	(void) pdev;
-	osDelay(wait_us / 1000);
+	HAL_Delay(wait_us / 1000);
 	return VL53L1_ERROR_NONE;
 }
 

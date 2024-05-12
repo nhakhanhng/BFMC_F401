@@ -6,8 +6,9 @@
  */
 #include "SpeedControlDuration.h"
 #include <stdio.h>
+
 const osThreadAttr_t SpeedControlAttr = { .priority =
-		(osPriority_t) osPriorityBelowNormal, .name = "SpeedControl_Task",
+		(osPriority_t) osPriorityNormal7, .name = "SpeedControl_Task",
 		.stack_size = 256 * 4 };
 
 void SpeedControlDuration_ThreadHandler(void *arg) {
@@ -21,12 +22,13 @@ void SpeedControlDuration_ThreadHandler(void *arg) {
 //		tick = osKernelGetTickCount();
 		if ((Controller->startTime + Controller->durationTime)
 				<= osKernelGetTickCount()) {
-			Motor_setSpeed(Controller->Motor, 0);
-			Servo_setAngle(Controller->Servo, 0);
+//			Motor_setSpeed(Controller->Motor, 0);
+//			Steering_setAngle(Controller->Steer, 0);
+			if (Controller->isEnable) UART_printf(Controller->UART, "@9:0;;\r\n");
 			Controller->isEnable = 0;
-			osDelay(100);
 //			tick = osKernelGetTickCount();
 		}
+		osDelay(100);
 	}
 }
 
@@ -41,14 +43,16 @@ void SpeedControlDuration_setVCDCMD(void *Handler, char *InMsg, char *Resp) {
 	float Angle = 0;
 	float Speed = 0;
 	float time = 0;
-	uint32_t res = sscanf(InMsg, "%f;%f;%f", &Speed, &time, &Angle);
+	uint32_t res = sscanf(InMsg, "%f;%f;%f", &Speed, &Angle, &time);
 	if (res != 3) {
 		sprintf(Resp, "-1;");
 		return;
 	}
+//	osDelay(5000);
 	Controller->durationTime = time * 1000;
-	Servo_setAngle(Controller->Servo, Angle);
-	Motor_setSpeed(Controller->Motor, Speed);
+	Steering_setAngle(Controller->Steer, Angle);
+	Motor_setSpeed(Controller->Motor, -Speed);
+//	Motor_setDutyCycle(Controller->Motor, Speed);
 	Controller->isEnable = 1;
 	Controller->startTime = osKernelGetTickCount();
 	osThreadResume(Controller->runThr);

@@ -7,10 +7,25 @@
 #include "Servo/Servo.h"
 #include <math.h>
 
-static const float steeringValueP[2] = { 15.0, 20.0 };
-static const float steeringValueN[2] = { -15.0, -20.0 };
-static const float stepValues[2] = { 0.0008594, 0.000951570 };
-static const float zeroDefaultValues[2] = { 0.07714891, 0.07672070 };
+static
+float steeringValueP[2] = { 15.0, 20.0 };
+static  float steeringValueN[2] = { -15.0, -20.0 };
+static  float stepValues[2] = { 85.94,95.1570 };
+static  float zeroDefaultValues[2] = { 7714.891, 7672.070 };
+
+static void calibrate_stepValue(float steps[],int size) {
+	for (int i = 0;i < size;i++) {
+		steps[i] += 0.4565 * steps[i];
+//		steps[i] += 0.07058 * steps[i];
+	}
+}
+
+static void calibrate_zeroDefalt(int size) {
+	for (int i = 0;i < size;i++) {
+		zeroDefaultValues[i] -= 0.44615 * stepValues[i];
+//		steps[i] += 0.07058 * steps[i];
+	}
+}
 
 static Interpolation_Result interpolate(float steering, const float steeringP[],
 		const float steeringN[], const float steps[],
@@ -86,6 +101,8 @@ void Servo_Init(Servo_HandleStruct *Servo, TIM_HandleTypeDef *htim,
 	Servo->Channel = Channel;
 	Servo->Limit = Limit;
 	Servo->Offset = Offset;
+//	calibrate_stepValue(stepValues, 2);
+//	calibrate_zeroDefalt(2);
 }
 
 HAL_StatusTypeDef Servo_Start(Servo_HandleStruct *Servo) {
@@ -107,7 +124,7 @@ void Servo_setAngle(Servo_HandleStruct *Servo, float Angle) {
 	else if (Angle < -Servo->Limit)
 		Angle = -Servo->Limit;
 	Interpolation_Result interpolation = interpolate(Angle,steeringValueP,steeringValueN,stepValues,zeroDefaultValues,2);
-	float pulse = (interpolation.step_value * Angle + interpolation.default_value) * 60000;
+	float pulse = (interpolation.step_value * Angle + interpolation.default_value) * 0.6;
 	Servo_setPWM(Servo, pulse);
 }
 

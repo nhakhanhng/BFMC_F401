@@ -8,7 +8,7 @@
 #ifndef DISTANCEPUBLISHER_DISTANCEPUBLISHER_H_
 #define DISTANCEPUBLISHER_DISTANCEPUBLISHER_H_
 
-#include "VL53L1X/Vl53l1xHandler/Vl53l1xHandler.h"
+#include "VL53_Handler/VL53_Handler.h"
 #include "UART_Handler/UART_Handler.h"
 #include "I2C_Handler/I2C_Handler.h"
 
@@ -19,7 +19,8 @@ typedef struct {
 	uint8_t PubID;
 //	uint8_t isEnable;
 	UARTHandler_Struct *UART_Handler;
-	Vl53l1_HandleStruct Vl53l1[4];
+	uint8_t NumofSens;
+	Vl53l0x_HandlerStruct *Vl53l0;
 } DistPublisher_Struct;
 
 

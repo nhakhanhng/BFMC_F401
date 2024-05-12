@@ -19,7 +19,7 @@ typedef struct {
 
 void ADC_Start(ADC_HandleStruct *ADC_Handler);
 void ADC_Start_DMA(ADC_HandleStruct *ADC_Handler);
-uint16_t ADC_GetValueFromeChannel(ADC_HandleStruct *ADC_Handler,uint32_t Channel);
+uint32_t ADC_GetValueFromeChannel(ADC_HandleStruct *ADC_Handler,uint32_t Channel);
 
 
 #endif /* ADC_ADCHANDLER_H_ */

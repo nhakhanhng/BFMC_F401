@@ -9,12 +9,15 @@
 #define SPEEDCONTROLDURATION_H_
 
 #include "Motor/MotorControl.h"
+#include "SteeringMotor/SteeringMotor.h"
 #include "Servo/Servo.h"
+#include "UART_Handler/UART_Handler.h"
 #include "cmsis_os.h"
 
 typedef struct {
 	Motor_HandlerStruct *Motor;
-	Servo_HandleStruct *Servo;
+	Steering_HandlerStruct *Steer;
+	UARTHandler_Struct *UART;
 	uint32_t durationTime;
 	uint32_t startTime;
 	uint8_t isEnable;

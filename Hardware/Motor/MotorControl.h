@@ -17,6 +17,7 @@ typedef struct {
 
 void Motor_Init(Motor_HandlerStruct *Motor, TIM_HandleTypeDef *htim, uint32_t channel);
 void Motor_setPWM(Motor_HandlerStruct *Motor,float PWM);
+void Motor_setDutyCycle(Motor_HandlerStruct *Motor,float value);
 void Motor_setSpeed(Motor_HandlerStruct *Motor,float Speed);
 void Motor_Start(Motor_HandlerStruct *Motor);
 void Motor_setSpeedCMD(void *Handler,char* InMsg,char* Resp);
